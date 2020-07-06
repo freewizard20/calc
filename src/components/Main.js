@@ -9,10 +9,12 @@ function Main() {
   const [accumulated, setAccumulated] = useState(0);
   const [cutlossPercentage, setCutlossPercentage] = useState(0);
   const [cutloss, setCutloss] = useState(0);
-  const [target, setTarget] = useState(0);
+  const [target, setTarget] = useState("");
   const [cutlossAmount, setCutlossAmount] = useState(0);
   const [tax, setTax] = useState(0);
   const [status, setStatus] = useState(0);
+  const [taxrate, setTaxrate] = useState(0.0015);
+  const [revenue, setRevenue] = useState(0);
 
   useEffect(() => {
     let totalamount = 0;
@@ -22,19 +24,21 @@ function Main() {
       totalamount += amountList[i].amount;
     }
     setAccumulated(accum);
+    let cutlossprice =
+      accum / totalamount -
+      (accum * Number(cutlossPercentage) * 0.01 - tax) / totalamount;
     if (totalamount !== 0) {
-      setAverage((accum / totalamount).toFixed(8));
-      setCutloss(
-        (accum / totalamount) *
-          (1 - Number(cutlossPercentage) * 0.01).toFixed(8)
+      setAverage(accum / totalamount);
+      setCutloss(cutlossprice.toFixed(2));
+      setCutlossAmount(
+        (accum / totalamount - cutlossprice) * totalamount + accum * 2 * taxrate
+      );
+      setRevenue(
+        (target - accum / totalamount) * totalamount - accum * 2 * taxrate
       );
     }
-
-    setCutlossAmount(
-      (accum * Number(cutlossPercentage) * 0.01 + accum * 2 * 0.0015).toFixed(2)
-    );
-    setTax(accum * 2 * 0.0015);
-  }, [priceList, cutlossPercentage]);
+    setTax(accum * 2 * taxrate);
+  }, [priceList, cutlossPercentage, target]);
 
   const addHandler = () => {
     if (isNaN(Number(price)) || isNaN(Number(amount))) {
@@ -116,6 +120,17 @@ function Main() {
       </h3>
       <h3>수수료 : {tax}</h3>
       <h3>손실 총액 : {cutlossAmount}</h3>
+      <h3>
+        목표가 :{" "}
+        <input
+          type="text"
+          onChange={(e) => {
+            setTarget(e.target.value);
+          }}
+          value={target}
+        />
+      </h3>
+      <h3>수익 금액 : {revenue}</h3>
     </div>
   );
 }
