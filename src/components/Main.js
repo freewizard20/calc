@@ -15,29 +15,46 @@ function Main() {
   const [status, setStatus] = useState(0);
   const [taxrate, setTaxrate] = useState(0.0015);
   const [revenue, setRevenue] = useState(0);
+  const [calcState, setCalcState] = useState(0);
 
   useEffect(() => {
-    let totalamount = 0;
-    let accum = 0;
-    for (let i = 0; i < priceList.length; i++) {
-      accum += priceList[i].price * amountList[i].amount;
-      totalamount += amountList[i].amount;
+    if (calcState === 0) {
+      let totalamount = 0;
+      let accum = 0;
+      for (let i = 0; i < priceList.length; i++) {
+        accum += priceList[i].price * amountList[i].amount;
+
+        totalamount += amountList[i].amount;
+      }
+      setAccumulated(accum);
+      let cutlossprice =
+        accum / totalamount -
+        (accum * Number(cutlossPercentage) * 0.01 - tax) / totalamount;
+      if (totalamount !== 0) {
+        setAverage(accum / totalamount);
+        setCutloss(cutlossprice.toFixed(2));
+        setCutlossAmount(
+          (accum / totalamount - cutlossprice) * totalamount +
+            accum * 2 * taxrate
+        );
+        setRevenue(
+          (target - accum / totalamount) * totalamount - accum * 2 * taxrate
+        );
+      } else {
+        setAverage(0);
+        setCutloss(0);
+        setCutlossAmount(0);
+        setRevenue(0);
+      }
+      setTax(accum * 2 * taxrate);
+    } else if (calcState === 1) {
+      let totalamount = 0;
+      let accum = 0;
+      for (let i = 0; i < priceList.length; i++) {
+        let BTCamount = amountList[i].amount / priceList[i].price;
+        totalamount += amountList[i].amount;
+      }
     }
-    setAccumulated(accum);
-    let cutlossprice =
-      accum / totalamount -
-      (accum * Number(cutlossPercentage) * 0.01 - tax) / totalamount;
-    if (totalamount !== 0) {
-      setAverage(accum / totalamount);
-      setCutloss(cutlossprice.toFixed(2));
-      setCutlossAmount(
-        (accum / totalamount - cutlossprice) * totalamount + accum * 2 * taxrate
-      );
-      setRevenue(
-        (target - accum / totalamount) * totalamount - accum * 2 * taxrate
-      );
-    }
-    setTax(accum * 2 * taxrate);
   }, [priceList, cutlossPercentage, target]);
 
   const addHandler = () => {
@@ -67,8 +84,20 @@ function Main() {
     setCutlossPercentage(Number(e.target.value));
   };
 
+  const resetHandler = () => {
+    setTarget("");
+    setPriceList([]);
+    setAmountList([]);
+    setCutlossPercentage(0);
+  };
+
+  const stateHandler = (e) => {
+    setCalcState(e);
+  };
+
   return (
     <div>
+      <h1>시나리오 플래너</h1>
       <ul>
         {priceList.map((price, index) => {
           return (
@@ -131,6 +160,30 @@ function Main() {
         />
       </h3>
       <h3>수익 금액 : {revenue}</h3>
+      <button onClick={resetHandler}>초기화</button>
+      <div style={{ marginTop: "20px" }}>
+        <button
+          onClick={() => {
+            stateHandler(0);
+          }}
+        >
+          일반거래
+        </button>
+        <button
+          onClick={() => {
+            stateHandler(0);
+          }}
+        >
+          비트멕스 롱
+        </button>
+        <button
+          onClick={() => {
+            stateHandler(0);
+          }}
+        >
+          비트멕스 숏
+        </button>
+      </div>
     </div>
   );
 }
