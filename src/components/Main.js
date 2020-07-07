@@ -131,7 +131,6 @@ function Main() {
 
   const stateHandler = (e) => {
     setCalcState(e);
-    resetHandler();
   };
 
   return (
