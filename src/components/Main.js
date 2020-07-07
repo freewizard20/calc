@@ -12,7 +12,6 @@ function Main() {
   const [target, setTarget] = useState("");
   const [cutlossAmount, setCutlossAmount] = useState(0);
   const [tax, setTax] = useState(0);
-  const [status, setStatus] = useState(0);
   const [taxrate, setTaxrate] = useState(0.0015);
   const [revenue, setRevenue] = useState(0);
   const [calcState, setCalcState] = useState(1);
@@ -72,6 +71,12 @@ function Main() {
           5
         )
       );
+      setLiquidationPrice(
+        (
+          accum /
+          ((1 - 0.006) * totalamount - totalamount * taxrate + Number(balance))
+        ).toFixed(5)
+      );
     } else if (calcState === 2) {
       let totalamount = 0;
       let accum = 0;
@@ -93,6 +98,12 @@ function Main() {
         (-accum / cutlossprice_d + totalamount + totalamount * taxrate).toFixed(
           5
         )
+      );
+      setLiquidationPrice(
+        (
+          accum /
+          ((1 + 0.006) * totalamount + totalamount * taxrate - Number(balance))
+        ).toFixed(5)
       );
     }
   }, [priceList, cutlossPercentage, target, calcState, balance]);
@@ -225,6 +236,13 @@ function Main() {
           }}
         >
           일반거래
+        </button>
+        <button
+          onClick={() => {
+            stateHandler(-1);
+          }}
+        >
+          공매도
         </button>
         <button
           onClick={() => {
