@@ -15,7 +15,7 @@ function Main() {
   const [status, setStatus] = useState(0);
   const [taxrate, setTaxrate] = useState(0.0015);
   const [revenue, setRevenue] = useState(0);
-  const [calcState, setCalcState] = useState(0);
+  const [calcState, setCalcState] = useState(1);
 
   useEffect(() => {
     if (calcState === 0) {
@@ -52,10 +52,47 @@ function Main() {
       let accum = 0;
       for (let i = 0; i < priceList.length; i++) {
         let BTCamount = amountList[i].amount / priceList[i].price;
-        totalamount += amountList[i].amount;
+        accum += amountList[i].amount;
+        totalamount += BTCamount;
       }
+      setAccumulated(totalamount);
+      setAverage(accum / totalamount);
+      setTax(totalamount * taxrate);
+      let BTCtarget = accum / target;
+      setRevenue(totalamount - BTCtarget);
+      let cutlossprice_d =
+        accum /
+        ((1 + cutlossPercentage * 0.01) * totalamount - totalamount * taxrate);
+      setCutloss(cutlossprice_d);
+      setCutlossAmount(
+        (accum / cutlossprice_d - totalamount + totalamount * taxrate).toFixed(
+          5
+        )
+      );
+    } else if (calcState === 2) {
+      let totalamount = 0;
+      let accum = 0;
+      for (let i = 0; i < priceList.length; i++) {
+        let BTCamount = amountList[i].amount / priceList[i].price;
+        accum += amountList[i].amount;
+        totalamount += BTCamount;
+      }
+      setAccumulated(totalamount);
+      setAverage(accum / totalamount);
+      setTax(totalamount * taxrate);
+      let BTCtarget = accum / target;
+      setRevenue(BTCtarget - totalamount);
+      let cutlossprice_d =
+        accum /
+        ((1 - cutlossPercentage * 0.01) * totalamount + totalamount * taxrate);
+      setCutloss(cutlossprice_d);
+      setCutlossAmount(
+        (-accum / cutlossprice_d + totalamount - totalamount * taxrate).toFixed(
+          5
+        )
+      );
     }
-  }, [priceList, cutlossPercentage, target]);
+  }, [priceList, cutlossPercentage, target, calcState]);
 
   const addHandler = () => {
     if (isNaN(Number(price)) || isNaN(Number(amount))) {
@@ -93,6 +130,7 @@ function Main() {
 
   const stateHandler = (e) => {
     setCalcState(e);
+    resetHandler();
   };
 
   return (
@@ -171,14 +209,14 @@ function Main() {
         </button>
         <button
           onClick={() => {
-            stateHandler(0);
+            stateHandler(1);
           }}
         >
           비트멕스 롱
         </button>
         <button
           onClick={() => {
-            stateHandler(0);
+            stateHandler(2);
           }}
         >
           비트멕스 숏
