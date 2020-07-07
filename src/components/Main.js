@@ -55,6 +55,7 @@ function Main() {
         accum += amountList[i].amount;
         totalamount += BTCamount;
       }
+
       setAccumulated(totalamount);
       setAverage(accum / totalamount);
       setTax(totalamount * taxrate);
