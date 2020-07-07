@@ -88,7 +88,7 @@ function Main() {
         ((1 - cutlossPercentage * 0.01) * totalamount + totalamount * taxrate);
       setCutloss(cutlossprice_d);
       setCutlossAmount(
-        (-accum / cutlossprice_d + totalamount - totalamount * taxrate).toFixed(
+        (-accum / cutlossprice_d + totalamount + totalamount * taxrate).toFixed(
           5
         )
       );
