@@ -16,6 +16,8 @@ function Main() {
   const [taxrate, setTaxrate] = useState(0.0015);
   const [revenue, setRevenue] = useState(0);
   const [calcState, setCalcState] = useState(1);
+  const [balance, setBalance] = useState("");
+  const [liquidationPrice, setLiquidationPrice] = useState(0);
 
   useEffect(() => {
     if (calcState === 0) {
@@ -93,7 +95,7 @@ function Main() {
         )
       );
     }
-  }, [priceList, cutlossPercentage, target, calcState]);
+  }, [priceList, cutlossPercentage, target, calcState, balance]);
 
   const addHandler = () => {
     if (isNaN(Number(price)) || isNaN(Number(amount))) {
@@ -198,6 +200,23 @@ function Main() {
         />
       </h3>
       <h3>수익 금액 : {revenue}</h3>
+      {calcState > 0 ? (
+        <div>
+          <h3>
+            원금 :{" "}
+            <input
+              type="text"
+              onChange={(e) => {
+                setBalance(e.target.value);
+              }}
+              value={balance}
+            />
+          </h3>
+          <h3>청산가 : {liquidationPrice}</h3>
+        </div>
+      ) : (
+        <></>
+      )}
       <button onClick={resetHandler}>초기화</button>
       <div style={{ marginTop: "20px" }}>
         <button
