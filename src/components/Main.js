@@ -36,7 +36,7 @@ function Main() {
         setCutloss(cutlossprice.toFixed(2));
         setCutlossAmount(
           (accum / totalamount - cutlossprice) * totalamount +
-            accum * 2 * taxrate
+          accum * 2 * taxrate
         );
         setRevenue(
           (target - accum / totalamount) * totalamount - accum * 2 * taxrate
@@ -140,6 +140,7 @@ function Main() {
     setPriceList([]);
     setAmountList([]);
     setCutlossPercentage(0);
+    setBalance(0);
   };
 
   const stateHandler = (e) => {
@@ -226,8 +227,8 @@ function Main() {
           <h3>청산가 : {liquidationPrice}</h3>
         </div>
       ) : (
-        <></>
-      )}
+          <></>
+        )}
       <button onClick={resetHandler}>초기화</button>
       <div style={{ marginTop: "20px" }}>
         <button
